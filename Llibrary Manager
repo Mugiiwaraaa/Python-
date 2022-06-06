@@ -1,0 +1,70 @@
+"""Created a library manager showcasing OOP concepts in Python"""
+class Library():
+
+
+    def __init__(self,manga_list,lib_name):
+        self.manga_list=manga_list
+        self.lib_name=lib_name
+        self.lent_books = {}
+
+    def display(self):
+        print( f" Welcome to out library {self.lib_name}")
+        for manga in self.manga_list:
+            print(manga)
+
+    def add(self,manga):
+        self.manga_list.append(manga)
+        print("Thank you for your kind contribution. ^_^ ")
+
+    def lend(self,user,manga):
+        if manga not in self.lent_books.keys():
+            self.lent_books.update({manga:user})
+            print(f"Yes you can borrow {manga}")
+            self.manga_list.remove(manga)
+        else:
+            print(f"The manga has already been lent to {self.lent_books[manga]}")
+
+
+    def returnz(self,manga):
+            self.lent_books.pop(manga)
+            print (f" {manga} has been returned. Thank you and please do come back and check out other interesting books in the list :)")
+            self.manga_list.append(manga)
+
+
+
+if __name__ == '__main__':
+    My_Lib=Library(["Naruto","One Piece","Haikyuu","Bleach","FairyTail","One Punch Man","Kuroko no Basket"],"MangaCafe")
+    while (True):
+        print("Hello and Welcome to our MangaCafe where you can indulge yourself in the best fiction available to mankind")
+        print("Please choose one of the options available")
+        print(
+            " 1. See the list of available manga/novel(s) in our library\n 2. Borrow a book from our library\n 3. Add or Donate a book to our library <3\n 4. Return one of the lent books\n")
+        user_choice=input()
+        if user_choice not in['1','2','3','4']:
+           continue
+        else:
+            user_choice=int(user_choice)
+
+        if user_choice==1:
+            My_Lib.display()
+        elif user_choice==2:
+            manga=input("Enter the name of the manga you want to borrow:\t")
+            user_name=input("Kindly please enter your name:\t")
+            My_Lib.lend(user_name,manga)
+        elif user_choice==3:
+            manga = input("Enter the name of the manga you want to add/donate to the library:\t")
+            My_Lib.add(manga)
+        elif user_choice==4:
+            manga = input("Enter the name of the manga you want to return back to the library:\t")
+            My_Lib.returnz(manga)
+        else:
+            print("Please enter a valid input")
+        p = ''
+        while( p!='1' and p!='2'):
+            p = input("Do you want to continue?\n 1.Yes 2. No\n")
+
+            if p=='1':
+                continue
+            elif p=='2':
+                exit()
+
