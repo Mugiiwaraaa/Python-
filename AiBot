@@ -1,0 +1,132 @@
+''' Your personal AI bot. Please feel free to use this code to play around with. '''
+import datetime
+import pyttsx3
+import speech_recognition as sr
+import wikipedia
+import webbrowser
+import os
+import random
+import smtplib
+
+engine=pyttsx3.init('sapi5')
+voices=engine.getProperty('voices')
+engine.setProperty('voice',voices[0].id)
+chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
+def speak(audio):
+    '''This function uses the pyttsx3 lib to identify the string and use it as speech'''
+    engine.say(audio)
+    engine.runAndWait()
+
+def wishMe():
+    '''This function uses the datetime module to return us the current time based on which the bot(Zeno) greets us.'''
+    hour=int(datetime.datetime.now().hour)
+
+    if hour>=0 and hour<12:
+        speak("Good Morning")
+    elif hour>=12 and hour<18:
+        speak("Good Afternoon")
+    elif hour>=18 and hour<=24:
+        speak("Good Evening")
+    
+
+    speak(" Its me Zeno here.  How may I assist you today?")  
+def takecommand():
+    '''This particular command is run in a while loop which take the microphone as the source input that
+    converts the speech of the user into a string'''
+    r=sr.Recognizer()
+    with sr.Microphone(device_index = 0) as source:
+        print("Listening....")
+        r.pause_threshold=1
+        r.energy_threshold = 300
+        r.adjust_for_ambient_noise(source, duration=1)
+        audio=r.listen(source)
+
+    try:
+         print("Recognizing...")
+         query = r.recognize_google(audio,language='en-in')   
+         print(f"user said:{query}\n") 
+
+    except Exception as e:
+        speak("Could you please repeat that.")    
+        print("Could you please repeat that...")    
+        return "None"   
+    return query     
+
+def SendEmail(to,content):
+    '''This function uses to smtplib lib to send emails directly to users.add
+    make sure the account you are sending from has low security access for this to work.'''
+    server=smtplib.SMTP('smtp.gmail.com',587)
+    server.ehlo
+    server.starttls
+    server.login('Your email id','your password') #Type in your email ID and password from where you want to draft the email
+    server.sendmail('Sender Email',to,content) 
+    server.close
+    pass
+if __name__ == "__main__":
+    
+    wishMe()
+    while(True):
+        query=takecommand().lower()
+
+        #Logic for executing tasks based on query
+        if 'wikipedia' in query:
+            speak("Searching wikipedia...")
+            query=query.replace("Wikipedia","")
+            results=wikipedia.summary(query,sentences=2)
+            speak("According to Wikipedia...")
+            print(results)
+            speak(results)
+
+        elif 'open youtube' in query:
+              
+            webbrowser.get(chrome_path).open("youtube.com")
+
+        elif 'anime' in query:
+            speak("Yes bruh just a sec..")
+            webbrowser.get(chrome_path).open("animixplay.to")    
+
+        elif 'google' in query:
+            speak("Yes bruh just a sec..")
+            webbrowser.get(chrome_path).open("google.com")      
+
+        elif 'how are you' in query:
+            speak("Im just chilling. What about you?")
+
+        elif 'play music' in query:
+            speak("Yes bro just a sec..>") 
+            music_dir= 'C:\\Users\\HASI\\Music' #put in the location of the folder where you have stored your music
+            songs=os.listdir(music_dir)
+            size=len(songs)
+            r1=random.randint(0,size-1)
+            print(songs)
+            os.startfile(os.path.join(music_dir,songs[r1]))
+        
+        elif 'the time' in query:
+            strtime=datetime.datetime.now().strftime("%H:%M:%S")
+            speak(f"Sir the time is {strtime}")
+        
+        elif 'open visualcode' in query:
+            app_path="C:\\Users\\HASI\\AppData\\Local\\Programs\\Microsoft VS Code\Code.exe" #location of the folder that contains the application
+            os.startfile(app_path)
+
+        elif 'send an email' in query:
+            try:
+                speak("What should I say?")
+                content=takecommand()
+                to="sender email" # Type the sender's email.
+                SendEmail(to,content)
+                speak("The email has been sent.")
+
+
+            except Exception as e:
+                print(e)
+                speak("I donk know but somethings up.  I am not able to send the email.")    
+            
+          
+        elif 'stop zeno' in query:
+            speak("Fine Im'ma leave you alone now.Bye.")
+            exit()
+
+''' I have not yet finished this particular code. The possibilities are seemless. You can add and create functions 
+to make your tasks more convinient depending according to your needs.add
+I would like to also thank CodeWithHarry for inspiring me to write this code.'''
